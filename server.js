@@ -71,7 +71,7 @@ wss.on('connection', (clientWs) => {
         deepgramWs.on('open', () => {
           console.log('Connected to Deepgram');
           
-          // Send configuration to Deepgram
+          // Send configuration to Deepgram according to official API docs
           const config = {
             type: 'SettingsConfiguration',
             audio: {
@@ -103,11 +103,18 @@ wss.on('connection', (clientWs) => {
             context: {
               messages: [],
               replay: true
-            },
-            endpointing: 200
+            }
           };
 
           deepgramWs.send(JSON.stringify(config));
+          
+          // Configure endpointing for aggressive interruption (200ms)
+          const endpointingConfig = {
+            type: 'UpdateSpokenInput',
+            endpointing: 200
+          };
+          
+          deepgramWs.send(JSON.stringify(endpointingConfig));
           
           // Notify client that connection is ready
           clientWs.send(JSON.stringify({
