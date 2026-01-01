@@ -238,7 +238,10 @@
                 showStatus('Connecting to server...', 'info');
 
                 // Connect to WebSocket server
-                ws = new WebSocket('ws://localhost:3000');
+                // Use wss:// for HTTPS, ws:// for HTTP
+                const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${wsProtocol}//${window.location.hostname}:3000`;
+                ws = new WebSocket(wsUrl);
 
                 ws.onopen = () => {
                     console.log('Connected to server');
