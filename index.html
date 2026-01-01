@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vartalaap AI - Language Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #startButton {
+            background-color: #667eea;
+            color: white;
+        }
+
+        #startButton:hover:not(:disabled) {
+            background-color: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        #stopButton {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        #stopButton:hover:not(:disabled) {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status.info {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status.success {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status.error {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+        .status.warning {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .mode-description {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Vartalaap AI</h1>
+        <p class="subtitle">Real-time AI Language Practice</p>
+
+        <div class="form-group">
+            <label for="modeSelect">Choose Practice Mode:</label>
+            <select id="modeSelect">
+                <option value="General">General Conversation</option>
+                <option value="Tech">Technical Interview</option>
+                <option value="UPSC">UPSC Interview</option>
+            </select>
+            <div class="mode-description" id="modeDescription">
+                Practice casual conversations and improve your communication skills in a friendly environment.
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="startButton">Start Practice</button>
+            <button id="stopButton" disabled>Stop</button>
+        </div>
+
+        <div id="status" class="status hidden"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        let mediaStream = null;
+        let audioContext = null;
+        let processor = null;
+        let source = null;
+
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const modeSelect = document.getElementById('modeSelect');
+        const statusDiv = document.getElementById('status');
+        const modeDescription = document.getElementById('modeDescription');
+
+        // Mode descriptions
+        const modeDescriptions = {
+            General: 'Practice casual conversations and improve your communication skills in a friendly environment.',
+            Tech: 'Prepare for technical interviews with questions on programming, algorithms, and system design.',
+            UPSC: 'Practice for UPSC interviews with questions on current affairs, polity, economy, and general knowledge.'
+        };
+
+        // Update mode description when selection changes
+        modeSelect.addEventListener('change', () => {
+            modeDescription.textContent = modeDescriptions[modeSelect.value];
+        });
+
+        function showStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.classList.remove('hidden');
+        }
+
+        function hideStatus() {
+            statusDiv.classList.add('hidden');
+        }
+
+        async function startPractice() {
+            try {
+                showStatus('Requesting microphone access...', 'info');
+
+                // Get microphone access
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        sampleRate: 16000
+                    }
+                });
+
+                showStatus('Connecting to server...', 'info');
+
+                // Connect to WebSocket server
+                ws = new WebSocket('ws://localhost:3000');
+
+                ws.onopen = () => {
+                    console.log('Connected to server');
+                    
+                    // Send selected mode
+                    ws.send(JSON.stringify({
+                        type: 'mode',
+                        mode: modeSelect.value
+                    }));
+
+                    // Start the session
+                    ws.send(JSON.stringify({
+                        type: 'start'
+                    }));
+                };
+
+                ws.onmessage = async (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        
+                        if (data.type === 'ready') {
+                            showStatus('Connected! Start speaking...', 'success');
+                            startButton.disabled = true;
+                            stopButton.disabled = false;
+                            modeSelect.disabled = true;
+                            
+                            // Start audio processing
+                            setupAudioProcessing();
+                        } else if (data.type === 'error') {
+                            showStatus(`Error: ${data.message}`, 'error');
+                            stopPractice();
+                        } else if (data.type === 'close') {
+                            showStatus('Connection closed', 'warning');
+                            stopPractice();
+                        } else if (data.type === 'audio') {
+                            // Handle audio response from Deepgram
+                            playAudio(data.audio);
+                        }
+                    } catch (error) {
+                        // Handle binary audio data
+                        if (event.data instanceof Blob) {
+                            playAudioBlob(event.data);
+                        }
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                    showStatus('Connection error', 'error');
+                    stopPractice();
+                };
+
+                ws.onclose = () => {
+                    console.log('WebSocket closed');
+                    if (!statusDiv.textContent.includes('Stopped')) {
+                        showStatus('Connection closed', 'warning');
+                    }
+                    stopPractice();
+                };
+
+            } catch (error) {
+                console.error('Error starting practice:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+                stopPractice();
+            }
+        }
+
+        function setupAudioProcessing() {
+            // Create audio context
+            audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+            source = audioContext.createMediaStreamSource(mediaStream);
+            
+            // Create script processor
+            processor = audioContext.createScriptProcessor(4096, 1, 1);
+            
+            processor.onaudioprocess = (e) => {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    const inputData = e.inputBuffer.getChannelData(0);
+                    
+                    // Convert Float32Array to Int16Array
+                    const int16Data = new Int16Array(inputData.length);
+                    for (let i = 0; i < inputData.length; i++) {
+                        const s = Math.max(-1, Math.min(1, inputData[i]));
+                        int16Data[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                    }
+                    
+                    // Send to server
+                    ws.send(int16Data.buffer);
+                }
+            };
+            
+            source.connect(processor);
+            processor.connect(audioContext.destination);
+        }
+
+        function playAudioBlob(blob) {
+            const audio = new Audio();
+            audio.src = URL.createObjectURL(blob);
+            audio.play().catch(err => console.error('Error playing audio:', err));
+        }
+
+        function playAudio(base64Audio) {
+            const audio = new Audio('data:audio/wav;base64,' + base64Audio);
+            audio.play().catch(err => console.error('Error playing audio:', err));
+        }
+
+        function stopPractice() {
+            // Stop audio processing
+            if (processor) {
+                processor.disconnect();
+                processor = null;
+            }
+            
+            if (source) {
+                source.disconnect();
+                source = null;
+            }
+            
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+
+            // Stop media stream
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+
+            // Close WebSocket
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+
+            // Update UI
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            modeSelect.disabled = false;
+            
+            if (!statusDiv.textContent.includes('Error') && !statusDiv.textContent.includes('closed')) {
+                showStatus('Practice session stopped', 'info');
+            }
+        }
+
+        // Event listeners
+        startButton.addEventListener('click', startPractice);
+        stopButton.addEventListener('click', () => {
+            showStatus('Stopping practice session...', 'info');
+            stopPractice();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', stopPractice);
+    </script>
+</body>
+</html>
