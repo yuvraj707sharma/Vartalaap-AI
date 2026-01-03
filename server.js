@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
-const WebSocket = require('ws');
+const { WebSocketServer } = require('ws');
+const { createClient } = require('@deepgram/sdk');
 const path = require('path');
 
 const app = express();
@@ -15,109 +16,188 @@ const server = app.listen(PORT, () => {
 });
 
 // Create WebSocket server
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocketServer({ server });
 
 // WebSocket connection handler
-wss.on('connection', (clientWs) => {
+wss.on('connection', async (clientWs) => {
   console.log('Client connected');
   
-  let deepgramWs = null;
+  let deepgramAgent = null;
 
-  clientWs.on('message', async (message) => {
-    try {
-      // Try to parse as JSON
-      const data = JSON. parse(message. toString());
+  try {
+    const apiKey = process.env.DEEPGRAM_API_KEY;
+    
+    if (!apiKey) {
+      clientWs.send(JSON.stringify({
+        type: 'error',
+        message: 'Deepgram API key not configured.  Add DEEPGRAM_API_KEY to . env file'
+      }));
+      clientWs.close();
+      return;
+    }
 
-      // Handle start connection request from frontend
-      if (data.type === 'start') {
-        const apiKey = process.env.DEEPGRAM_API_KEY;
-        
-        if (!apiKey) {
-          clientWs.send(JSON. stringify({
-            type: 'error',
-            message: 'Deepgram API key not configured.  Add DEEPGRAM_API_KEY to .env file'
-          }));
+    // Initialize Deepgram client using SDK
+    const deepgram = createClient(apiKey);
+
+    clientWs.on('message', async (message) => {
+      try {
+        // Try to parse as JSON
+        const data = JSON.parse(message. toString());
+
+        // Handle start connection request from frontend
+        if (data.type === 'start') {
+          console.log('Starting Deepgram connection...');
+
+          // Create agent connection using SDK
+          const agent = deepgram.agent();
+          deepgramAgent = agent;
+
+          // Forward Welcome message from Deepgram to client
+          agent.on('Welcome', (data) => {
+            console.log('✅ Connected to Deepgram Agent API');
+            if (clientWs.readyState === 1) {
+              clientWs.send(JSON.stringify(data));
+            }
+          });
+
+          // Forward SettingsApplied message from Deepgram to client
+          agent.on('SettingsApplied', (data) => {
+            console.log('📥 Deepgram → SettingsApplied');
+            if (clientWs. readyState === 1) {
+              clientWs.send(JSON.stringify(data));
+            }
+          });
+
+          // Forward ConversationText events
+          agent.on('ConversationText', (data) => {
+            console.log('📥 Deepgram → ConversationText:', data. role);
+            if (clientWs. readyState === 1) {
+              clientWs.send(JSON.stringify(data));
+            }
+          });
+
+          // Forward UserStartedSpeaking events
+          agent.on('UserStartedSpeaking', (data) => {
+            console.log('📥 Deepgram → UserStartedSpeaking');
+            if (clientWs. readyState === 1) {
+              clientWs.send(JSON.stringify(data));
+            }
+          });
+
+          // Forward AgentThinking events
+          agent.on('AgentThinking', (data) => {
+            console.log('📥 Deepgram → AgentThinking');
+            if (clientWs. readyState === 1) {
+              clientWs.send(JSON.stringify(data));
+            }
+          });
+
+          // Forward AgentAudioDone events
+          agent.on('AgentAudioDone', (data) => {
+            console.log('📥 Deepgram → AgentAudioDone');
+            if (clientWs.readyState === 1) {
+              clientWs.send(JSON. stringify(data));
+            }
+          });
+
+          // Forward audio chunks from Deepgram to client
+          agent.on('Audio', (audioData) => {
+            if (clientWs.readyState === 1) {
+              clientWs.send(audioData, { binary: true });
+            }
+          });
+
+          // Forward Error events
+          agent.on('Error', (error) => {
+            console. error('❌ Deepgram error:', error);
+            if (clientWs.readyState === 1) {
+              clientWs.send(JSON.stringify({
+                type: 'Error',
+                description: error.message || 'Unknown error occurred',
+                code: error.code || 'PROVIDER_ERROR'
+              }));
+            }
+          });
+
+          // Forward Warning events
+          agent.on('Warning', (data) => {
+            console.warn('⚠️ Deepgram warning:', data);
+            if (clientWs.readyState === 1) {
+              clientWs.send(JSON.stringify(data));
+            }
+          });
+
+          // Handle agent close
+          agent.on('Close', () => {
+            console.log('Deepgram agent connection closed');
+            if (clientWs.readyState === 1) {
+              clientWs.send(JSON.stringify({
+                type: 'close',
+                message: 'Deepgram connection closed'
+              }));
+            }
+          });
+
           return;
         }
 
-        console.log('Starting Deepgram connection...');
+        // Handle Settings message
+        if (data.type === 'Settings' && deepgramAgent) {
+          console.log('📤 Client → Settings');
+          deepgramAgent.configure(data);
+          return;
+        }
 
-        // Connect to Deepgram Agent API with Authorization header
-        const deepgramUrl = 'wss://agent.deepgram.com/v1/agent/converse';
-        deepgramWs = new WebSocket(deepgramUrl, {
-          headers: {
-            'Authorization': `Token ${apiKey}`
+        // Handle stop message
+        if (data.type === 'stop' && deepgramAgent) {
+          console.log('📤 Client → stop');
+          try {
+            await deepgramAgent. disconnect();
+          } catch (e) {
+            console.log('Error disconnecting:', e. message);
           }
-        });
+          return;
+        }
 
-        deepgramWs.on('open', () => {
-          console.log('✅ Connected to Deepgram Agent API');
-          // DON'T send settings here - let frontend handle it after Welcome
-        });
+        // Forward other JSON messages to Deepgram
+        if (deepgramAgent) {
+          console.log('📤 Client →', data.type || 'unknown');
+          deepgramAgent.send(JSON.stringify(data));
+        }
 
-        deepgramWs.on('message', (deepgramMessage, isBinary) => {
-          // Forward ALL messages from Deepgram to client (binary or JSON)
-          if (clientWs.readyState === WebSocket.OPEN) {
-            if (isBinary) {
-              // Binary audio data
-              clientWs.send(deepgramMessage);
-            } else {
-              // JSON message - log and forward
-              try {
-                const parsed = JSON.parse(deepgramMessage.toString());
-                console.log('📥 Deepgram →', parsed. type);
-              } catch (e) {
-                // Not JSON, forward anyway
-              }
-              clientWs.send(deepgramMessage);
-            }
-          }
-        });
-
-        deepgramWs.on('error', (error) => {
-          console.error('❌ Deepgram error:', error. message);
-          clientWs.send(JSON.stringify({
-            type: 'Error',
-            description: `Deepgram connection error: ${error.message}`,
-            code: 'CONNECTION_FAILED'
-          }));
-        });
-
-        deepgramWs. on('close', (code, reason) => {
-          console.log(`Deepgram connection closed:  ${code} - ${reason}`);
-          clientWs.send(JSON.stringify({
-            type: 'close',
-            message: 'Deepgram connection closed'
-          }));
-        });
-
-        return;
+      } catch (error) {
+        // Not JSON - treat as binary audio data
+        if (deepgramAgent) {
+          deepgramAgent.send(message);
+        }
       }
+    });
 
-      // Forward Settings and other JSON messages to Deepgram
-      if (deepgramWs && deepgramWs.readyState === WebSocket.OPEN) {
-        console.log('📤 Client →', data.type || 'unknown');
-        deepgramWs.send(message);
+    clientWs.on('close', async () => {
+      console.log('Client disconnected');
+      if (deepgramAgent) {
+        try {
+          await deepgramAgent.disconnect();
+        } catch (error) {
+          console.error('Error disconnecting Deepgram agent:', error);
+        }
       }
+    });
 
-    } catch (error) {
-      // Not JSON - treat as binary audio data
-      if (deepgramWs && deepgramWs.readyState === WebSocket. OPEN) {
-        deepgramWs.send(message);
-      }
+    clientWs.on('error', (error) => {
+      console. error('Client WebSocket error:', error);
+    });
+
+  } catch (error) {
+    console.error('Error initializing connection:', error);
+    if (clientWs.readyState === 1) {
+      clientWs.send(JSON.stringify({
+        type: 'error',
+        message: 'Failed to initialize connection'
+      }));
+      clientWs.close();
     }
-  });
-
-  clientWs.on('close', () => {
-    console.log('Client disconnected');
-    if (deepgramWs) {
-      deepgramWs.close();
-    }
-  });
-
-  clientWs.on('error', (error) => {
-    console.error('Client WebSocket error:', error);
-  });
+  }
 });
 
 console.log('WebSocket server is ready');
