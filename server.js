@@ -43,7 +43,8 @@ wss.on('connection', (clientWs) => {
         console.log('Starting Deepgram connection...');
 
         // Connect to Deepgram Agent API with Authorization header
-        deepgramWs = new WebSocket('wss://agent.deepgram.com/agent', {
+        const deepgramUrl = 'wss://agent.deepgram.com/v1/agent/converse';
+        deepgramWs = new WebSocket(deepgramUrl, {
           headers: {
             'Authorization': `Token ${apiKey}`
           }
