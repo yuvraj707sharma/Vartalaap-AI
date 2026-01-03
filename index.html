@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vartalaap AI - Language Practice</title>
+    <title>Vartalaap AI - English Practice with Instant Corrections</title>
     <style>
         * {
             margin: 0;
@@ -26,7 +26,7 @@
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            max-width: 500px;
+            max-width: 550px;
             width: 100%;
             border: 1px solid #2a2a2a;
         }
@@ -39,199 +39,11 @@
         }
 
         .subtitle {
-            color: #888;
+            color: #00f5ff;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 0.9em;
-        }
-
-        /* Animated Glass Pipe Circle */
-        .voice-circle-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 30px 0;
-            height: 220px;
-        }
-
-        .voice-circle {
-            position: relative;
-            width: 200px;
-            height: 200px;
-        }
-
-        .voice-circle svg {
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-        }
-
-        /* Glass pipe paths */
-        .glass-pipe {
-            fill: none;
-            stroke-width: 4;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        /* Glow layers for glass effect */
-        .glow-layer {
-            fill: none;
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            opacity: 0.3;
-            filter: blur(4px);
-        }
-
-        .inner-glow {
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            opacity: 0.8;
-        }
-
-        /* Idle state - gentle flowing animation */
-        .voice-circle.idle .pipe-1 {
-            stroke-dasharray: 800;
-            stroke-dashoffset: 0;
-            animation: idleFlow1 6s ease-in-out infinite;
-        }
-
-        .voice-circle.idle .pipe-2 {
-            stroke-dasharray: 800;
-            stroke-dashoffset: 100;
-            animation: idleFlow2 6s ease-in-out infinite;
-        }
-
-        .voice-circle.idle .pipe-3 {
-            stroke-dasharray: 800;
-            stroke-dashoffset: 200;
-            animation: idleFlow3 6s ease-in-out infinite;
-        }
-
-        .voice-circle.idle .glow-1,
-        .voice-circle.idle .glow-2,
-        .voice-circle.idle .glow-3 {
-            animation: glowIdle 4s ease-in-out infinite;
-        }
-
-        @keyframes idleFlow1 {
-            0%, 100% { stroke-dashoffset: 0; }
-            50% { stroke-dashoffset: -100; }
-        }
-
-        @keyframes idleFlow2 {
-            0%, 100% { stroke-dashoffset: 100; }
-            50% { stroke-dashoffset: 0; }
-        }
-
-        @keyframes idleFlow3 {
-            0%, 100% { stroke-dashoffset: 200; }
-            50% { stroke-dashoffset: 100; }
-        }
-
-        @keyframes glowIdle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 0.4; }
-        }
-
-        /* Speaking state - dynamic wave flowing */
-        .voice-circle.speaking .pipe-1 {
-            stroke-dasharray: 60 30;
-            animation: speakFlow1 1s linear infinite;
-        }
-
-        .voice-circle.speaking .pipe-2 {
-            stroke-dasharray: 50 40;
-            animation: speakFlow2 1.2s linear infinite;
-        }
-
-        .voice-circle.speaking .pipe-3 {
-            stroke-dasharray: 70 20;
-            animation: speakFlow3 0.8s linear infinite;
-        }
-
-        .voice-circle.speaking .glow-1,
-        .voice-circle.speaking .glow-2,
-        .voice-circle.speaking .glow-3 {
-            animation: glowPulse 0.5s ease-in-out infinite;
-        }
-
-        @keyframes speakFlow1 {
-            0% { stroke-dashoffset: 0; }
-            100% { stroke-dashoffset: -180; }
-        }
-
-        @keyframes speakFlow2 {
-            0% { stroke-dashoffset: 0; }
-            100% { stroke-dashoffset: -180; }
-        }
-
-        @keyframes speakFlow3 {
-            0% { stroke-dashoffset: 0; }
-            100% { stroke-dashoffset: -180; }
-        }
-
-        @keyframes glowPulse {
-            0%, 100% { opacity: 0.3; filter: blur(4px); }
-            50% { opacity: 0.6; filter: blur(6px); }
-        }
-
-        /* Listening state - breathing pulse */
-        .voice-circle.listening .pipe-1 {
-            stroke-dasharray: 800;
-            stroke-dashoffset: 0;
-            animation: listenFlow1 2s ease-in-out infinite;
-        }
-
-        .voice-circle.listening .pipe-2 {
-            stroke-dasharray: 800;
-            stroke-dashoffset: 50;
-            animation: listenFlow2 2s ease-in-out infinite 0.3s;
-        }
-
-        .voice-circle.listening .pipe-3 {
-            stroke-dasharray: 800;
-            stroke-dashoffset: 100;
-            animation: listenFlow3 2s ease-in-out infinite 0.6s;
-        }
-
-        .voice-circle.listening .glow-1,
-        .voice-circle.listening .glow-2,
-        .voice-circle.listening .glow-3 {
-            animation: glowListen 2s ease-in-out infinite;
-        }
-
-        @keyframes listenFlow1 {
-            0%, 100% { stroke-dashoffset: 0; opacity: 0.7; }
-            50% { stroke-dashoffset: -50; opacity: 1; }
-        }
-
-        @keyframes listenFlow2 {
-            0%, 100% { stroke-dashoffset: 50; opacity: 0.7; }
-            50% { stroke-dashoffset: 0; opacity: 1; }
-        }
-
-        @keyframes listenFlow3 {
-            0%, 100% { stroke-dashoffset: 100; opacity: 0.7; }
-            50% { stroke-dashoffset: 50; opacity: 1; }
-        }
-
-        @keyframes glowListen {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Rotation for dynamic effect */
-        .voice-circle.speaking svg {
-            animation: subtleRotate 8s linear infinite;
-        }
-
-        @keyframes subtleRotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            font-size: 0.95em;
+            font-weight: 500;
         }
 
         .form-group {
@@ -243,6 +55,7 @@
             margin-bottom: 8px;
             color: #ccc;
             font-weight: 600;
+            font-size: 0.95em;
         }
 
         select {
@@ -351,92 +164,56 @@
 
         .mode-description {
             background-color: #252525;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             margin-top: 10px;
-            font-size: 0.9em;
+            font-size: 0.85em;
             color: #888;
             border: 1px solid #333;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            color: #00f5ff;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🎙️ Vartalaap AI</h1>
-        <p class="subtitle">Real-time AI Language Practice</p>
-
-        <!-- Animated Glass Pipe Circle -->
-        <div class="voice-circle-container">
-            <div class="voice-circle idle" id="voiceCircle">
-                <svg viewBox="0 0 200 200">
-                    <defs>
-                        <!-- Gradient for cyan/blue pipe -->
-                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#0080ff;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#00f5ff;stop-opacity:1" />
-                        </linearGradient>
-                        <!-- Gradient for magenta/pink pipe -->
-                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#ff00ff;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#ff0080;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#cc00ff;stop-opacity:1" />
-                        </linearGradient>
-                        <!-- Gradient for green pipe -->
-                        <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#00ff88;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#00ffcc;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#00ff88;stop-opacity:1" />
-                        </linearGradient>
-                        <!-- Glow filters -->
-                        <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                            <feMerge>
-                                <feMergeNode in="coloredBlur"/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
-                        </filter>
-                        <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                            <feMerge>
-                                <feMergeNode in="coloredBlur"/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
-                        </filter>
-                    </defs>
-                    
-                    <!-- Outer glow layers -->
-                    <path class="glow-layer glow-1" stroke="url(#gradient1)" 
-                          d="M 60 170 Q 30 140 35 100 Q 40 50 80 30 Q 130 10 160 50 Q 190 100 160 140 Q 130 180 100 160 Q 70 140 60 170 Q 55 185 50 175 Q 45 165 55 155 Q 60 150 60 170"/>
-                    <path class="glow-layer glow-2" stroke="url(#gradient2)" 
-                          d="M 55 165 Q 25 135 32 95 Q 38 45 78 25 Q 128 5 158 48 Q 188 100 155 142 Q 122 184 92 162 Q 62 140 55 165 Q 48 180 45 172 Q 40 160 52 150 Q 58 145 55 165"/>
-                    <path class="glow-layer glow-3" stroke="url(#gradient3)" 
-                          d="M 65 175 Q 35 145 38 105 Q 42 55 82 35 Q 132 15 162 55 Q 192 105 162 145 Q 132 185 102 165 Q 72 145 65 175 Q 58 190 55 180 Q 50 168 60 158 Q 66 153 65 175"/>
-                    
-                    <!-- Main glass pipe paths -->
-                    <path class="glass-pipe pipe-1" stroke="url(#gradient1)" filter="url(#glow1)"
-                          d="M 60 170 Q 30 140 35 100 Q 40 50 80 30 Q 130 10 160 50 Q 190 100 160 140 Q 130 180 100 160 Q 70 140 60 170 Q 55 185 50 175 Q 45 165 55 155 Q 60 150 60 170"/>
-                    <path class="glass-pipe pipe-2" stroke="url(#gradient2)" filter="url(#glow1)"
-                          d="M 55 165 Q 25 135 32 95 Q 38 45 78 25 Q 128 5 158 48 Q 188 100 155 142 Q 122 184 92 162 Q 62 140 55 165 Q 48 180 45 172 Q 40 160 52 150 Q 58 145 55 165"/>
-                    <path class="glass-pipe pipe-3" stroke="url(#gradient3)" filter="url(#glow1)"
-                          d="M 65 175 Q 35 145 38 105 Q 42 55 82 35 Q 132 15 162 55 Q 192 105 162 145 Q 132 185 102 165 Q 72 145 65 175 Q 58 190 55 180 Q 50 168 60 158 Q 66 153 65 175"/>
-                    
-                    <!-- Inner highlight for glass effect -->
-                    <path class="inner-glow" stroke="rgba(255,255,255,0.4)" stroke-width="1"
-                          d="M 60 170 Q 30 140 35 100 Q 40 50 80 30 Q 130 10 160 50 Q 190 100 160 140 Q 130 180 100 160 Q 70 140 60 170"/>
-                </svg>
-            </div>
-        </div>
+        <p class="subtitle">Real-time English Practice with Instant Corrections</p>
 
         <div class="form-group">
             <label for="modeSelect">Choose Practice Mode:</label>
             <select id="modeSelect">
-                <option value="General">General Conversation</option>
-                <option value="Tech">Technical Interview</option>
-                <option value="UPSC">UPSC Interview</option>
+                <option value="English Practice">🗣️ English Practice (Beginner)</option>
+                <option value="Tech Interview">💻 Technical Interview (IT/Software)</option>
+                <option value="UPSC Interview">🏛️ UPSC Interview (Civil Services)</option>
+                <option value="SSC/Government Exams">📋 SSC/Railway/Banking Interview</option>
+                <option value="Finance Interview">💰 Finance/Banking Interview</option>
+                <option value="Business Interview">💼 Business/MBA Interview</option>
             </select>
             <div class="mode-description" id="modeDescription">
-                Practice casual conversations and improve your communication skills in a friendly environment.
+                Practice English speaking with instant corrections. AI will interrupt you when you make mistakes and explain in your language.
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="languageSelect">Your Native Language (for corrections):</label>
+            <select id="languageSelect">
+                <option value="Hindi">हिंदी (Hindi)</option>
+                <option value="Tamil">தமிழ் (Tamil)</option>
+                <option value="Telugu">తెలుగు (Telugu)</option>
+                <option value="Marathi">मराठी (Marathi)</option>
+                <option value="Punjabi">ਪੰਜਾਬੀ (Punjabi)</option>
+                <option value="Bengali">বাংলা (Bengali)</option>
+                <option value="Gujarati">ગુજરાતી (Gujarati)</option>
+                <option value="Kannada">ಕನ್ನಡ (Kannada)</option>
+                <option value="Malayalam">മലയാളം (Malayalam)</option>
+            </select>
+            <div class="mode-description">
+                AI will explain your mistakes in this language for better understanding.
             </div>
         </div>
 
@@ -458,25 +235,23 @@
         const startButton = document.getElementById('startButton');
         const stopButton = document.getElementById('stopButton');
         const modeSelect = document.getElementById('modeSelect');
+        const languageSelect = document.getElementById('languageSelect');
         const statusDiv = document.getElementById('status');
         const modeDescription = document.getElementById('modeDescription');
-        const voiceCircle = document.getElementById('voiceCircle');
-
-        // Voice circle animation states
-        function setCircleState(state) {
-            voiceCircle.className = 'voice-circle ' + state;
-        }
 
         // Mode descriptions
         const modeDescriptions = {
-            General: 'Practice casual conversations and improve your communication skills in a friendly environment.',
-            Tech: 'Prepare for technical interviews with questions on programming, algorithms, and system design.',
-            UPSC: 'Practice for UPSC interviews with questions on current affairs, polity, economy, and general knowledge.'
+            'English Practice': 'Practice English speaking with instant corrections. AI will <span class="highlight">interrupt you immediately</span> when you make mistakes and explain in your language.',
+            'Tech Interview': 'Prepare for tech interviews (DSA, System Design, Projects). AI corrects your English <span class="highlight">while asking technical questions</span>.',
+            'UPSC Interview': 'Practice for UPSC/IAS interviews. AI corrects your English and asks questions on <span class="highlight">current affairs, polity, and general knowledge</span>.',
+            'SSC/Government Exams': 'Prepare for SSC, Railway, Banking interviews. AI helps you <span class="highlight">speak confidently in English</span> with instant corrections.',
+            'Finance Interview': 'Practice for banking and finance job interviews. AI corrects your English while discussing <span class="highlight">financial concepts</span>.',
+            'Business Interview': 'Prepare for MBA and corporate interviews. AI corrects your English during <span class="highlight">business case discussions</span>.'
         };
 
         // Update mode description when selection changes
         modeSelect.addEventListener('change', () => {
-            modeDescription.textContent = modeDescriptions[modeSelect.value];
+            modeDescription.innerHTML = modeDescriptions[modeSelect.value];
         });
 
         function showStatus(message, type = 'info') {
@@ -506,7 +281,6 @@
                 showStatus('Connecting to server...', 'info');
 
                 // Connect to WebSocket server
-                // Use wss:// for HTTPS, ws:// for HTTP
                 const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                 const wsUrl = `${wsProtocol}//${window.location.hostname}:3000`;
                 ws = new WebSocket(wsUrl);
@@ -520,6 +294,12 @@
                         mode: modeSelect.value
                     }));
 
+                    // Send selected language
+                    ws.send(JSON.stringify({
+                        type: 'language',
+                        language: languageSelect.value
+                    }));
+
                     // Start the session
                     ws.send(JSON.stringify({
                         type: 'start'
@@ -531,31 +311,27 @@
                         const data = JSON.parse(event.data);
                         
                         if (data.type === 'ready') {
-                            showStatus('Connected! Start speaking...', 'success');
+                            showStatus('Connected! Start speaking in English...', 'success');
                             startButton.disabled = true;
                             stopButton.disabled = false;
                             modeSelect.disabled = true;
-                            setCircleState('listening');
+                            languageSelect.disabled = true;
                             
                             // Start audio processing
                             setupAudioProcessing();
                         } else if (data.type === 'error') {
                             showStatus(`Error: ${data.message}`, 'error');
-                            setCircleState('idle');
                             stopPractice();
                         } else if (data.type === 'close') {
                             showStatus('Connection closed', 'warning');
-                            setCircleState('idle');
                             stopPractice();
                         } else if (data.type === 'audio') {
                             // Handle audio response from Deepgram
-                            setCircleState('speaking');
                             playAudio(data.audio);
                         }
                     } catch (error) {
                         // Handle binary audio data
                         if (event.data instanceof Blob) {
-                            setCircleState('speaking');
                             playAudioBlob(event.data);
                         }
                     }
@@ -613,20 +389,12 @@
         function playAudioBlob(blob) {
             const audio = new Audio();
             audio.src = URL.createObjectURL(blob);
-            audio.onended = () => setCircleState('listening');
-            audio.play().catch(err => {
-                console.error('Error playing audio:', err);
-                setCircleState('listening');
-            });
+            audio.play().catch(err => console.error('Error playing audio:', err));
         }
 
         function playAudio(base64Audio) {
             const audio = new Audio('data:audio/wav;base64,' + base64Audio);
-            audio.onended = () => setCircleState('listening');
-            audio.play().catch(err => {
-                console.error('Error playing audio:', err);
-                setCircleState('listening');
-            });
+            audio.play().catch(err => console.error('Error playing audio:', err));
         }
 
         function stopPractice() {
@@ -662,7 +430,7 @@
             startButton.disabled = false;
             stopButton.disabled = true;
             modeSelect.disabled = false;
-            setCircleState('idle');
+            languageSelect.disabled = false;
             
             if (!statusDiv.textContent.includes('Error') && !statusDiv.textContent.includes('closed')) {
                 showStatus('Practice session stopped', 'info');
