@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vartalaap AI - Language Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid #2a2a2a;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #888;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        /* Animated Glass Pipe Circle */
+        .voice-circle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            height: 220px;
+        }
+
+        .voice-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .voice-circle svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* Glass pipe paths */
+        .glass-pipe {
+            fill: none;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Glow layers for glass effect */
+        .glow-layer {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.3;
+            filter: blur(4px);
+        }
+
+        .inner-glow {
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.8;
+        }
+
+        /* Idle state - gentle flowing animation */
+        .voice-circle.idle .pipe-1 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 0;
+            animation: idleFlow1 6s ease-in-out infinite;
+        }
+
+        .voice-circle.idle .pipe-2 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 100;
+            animation: idleFlow2 6s ease-in-out infinite;
+        }
+
+        .voice-circle.idle .pipe-3 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 200;
+            animation: idleFlow3 6s ease-in-out infinite;
+        }
+
+        .voice-circle.idle .glow-1,
+        .voice-circle.idle .glow-2,
+        .voice-circle.idle .glow-3 {
+            animation: glowIdle 4s ease-in-out infinite;
+        }
+
+        @keyframes idleFlow1 {
+            0%, 100% { stroke-dashoffset: 0; }
+            50% { stroke-dashoffset: -100; }
+        }
+
+        @keyframes idleFlow2 {
+            0%, 100% { stroke-dashoffset: 100; }
+            50% { stroke-dashoffset: 0; }
+        }
+
+        @keyframes idleFlow3 {
+            0%, 100% { stroke-dashoffset: 200; }
+            50% { stroke-dashoffset: 100; }
+        }
+
+        @keyframes glowIdle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Speaking state - dynamic wave flowing */
+        .voice-circle.speaking .pipe-1 {
+            stroke-dasharray: 60 30;
+            animation: speakFlow1 1s linear infinite;
+        }
+
+        .voice-circle.speaking .pipe-2 {
+            stroke-dasharray: 50 40;
+            animation: speakFlow2 1.2s linear infinite;
+        }
+
+        .voice-circle.speaking .pipe-3 {
+            stroke-dasharray: 70 20;
+            animation: speakFlow3 0.8s linear infinite;
+        }
+
+        .voice-circle.speaking .glow-1,
+        .voice-circle.speaking .glow-2,
+        .voice-circle.speaking .glow-3 {
+            animation: glowPulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes speakFlow1 {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -180; }
+        }
+
+        @keyframes speakFlow2 {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -180; }
+        }
+
+        @keyframes speakFlow3 {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -180; }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.3; filter: blur(4px); }
+            50% { opacity: 0.6; filter: blur(6px); }
+        }
+
+        /* Listening state - breathing pulse */
+        .voice-circle.listening .pipe-1 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 0;
+            animation: listenFlow1 2s ease-in-out infinite;
+        }
+
+        .voice-circle.listening .pipe-2 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 50;
+            animation: listenFlow2 2s ease-in-out infinite 0.3s;
+        }
+
+        .voice-circle.listening .pipe-3 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 100;
+            animation: listenFlow3 2s ease-in-out infinite 0.6s;
+        }
+
+        .voice-circle.listening .glow-1,
+        .voice-circle.listening .glow-2,
+        .voice-circle.listening .glow-3 {
+            animation: glowListen 2s ease-in-out infinite;
+        }
+
+        @keyframes listenFlow1 {
+            0%, 100% { stroke-dashoffset: 0; opacity: 0.7; }
+            50% { stroke-dashoffset: -50; opacity: 1; }
+        }
+
+        @keyframes listenFlow2 {
+            0%, 100% { stroke-dashoffset: 50; opacity: 0.7; }
+            50% { stroke-dashoffset: 0; opacity: 1; }
+        }
+
+        @keyframes listenFlow3 {
+            0%, 100% { stroke-dashoffset: 100; opacity: 0.7; }
+            50% { stroke-dashoffset: 50; opacity: 1; }
+        }
+
+        @keyframes glowListen {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Rotation for dynamic effect */
+        .voice-circle.speaking svg {
+            animation: subtleRotate 8s linear infinite;
+        }
+
+        @keyframes subtleRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-weight: 600;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #252525;
+            color: #fff;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:hover {
+            border-color: #00f5ff;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #00f5ff;
+        }
+
+        select option {
+            background-color: #252525;
+            color: #fff;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #startButton {
+            background: linear-gradient(135deg, #00f5ff 0%, #00ff88 100%);
+            color: #0a0a0a;
+        }
+
+        #startButton:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 245, 255, 0.4);
+        }
+
+        #stopButton {
+            background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+            color: #fff;
+        }
+
+        #stopButton:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status.info {
+            background-color: rgba(0, 245, 255, 0.1);
+            color: #00f5ff;
+            border: 1px solid rgba(0, 245, 255, 0.3);
+        }
+
+        .status.success {
+            background-color: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .status.error {
+            background-color: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+
+        .status.warning {
+            background-color: rgba(255, 165, 0, 0.1);
+            color: #ffa500;
+            border: 1px solid rgba(255, 165, 0, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .mode-description {
+            background-color: #252525;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #888;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Vartalaap AI</h1>
+        <p class="subtitle">Real-time AI Language Practice</p>
+
+        <!-- Animated Glass Pipe Circle -->
+        <div class="voice-circle-container">
+            <div class="voice-circle idle" id="voiceCircle">
+                <svg viewBox="0 0 200 200">
+                    <defs>
+                        <!-- Gradient for cyan/blue pipe -->
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#0080ff;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#00f5ff;stop-opacity:1" />
+                        </linearGradient>
+                        <!-- Gradient for magenta/pink pipe -->
+                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff00ff;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ff0080;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#cc00ff;stop-opacity:1" />
+                        </linearGradient>
+                        <!-- Gradient for green pipe -->
+                        <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00ff88;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#00ffcc;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#00ff88;stop-opacity:1" />
+                        </linearGradient>
+                        <!-- Glow filters -->
+                        <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <!-- Outer glow layers -->
+                    <path class="glow-layer glow-1" stroke="url(#gradient1)" 
+                          d="M 60 170 Q 30 140 35 100 Q 40 50 80 30 Q 130 10 160 50 Q 190 100 160 140 Q 130 180 100 160 Q 70 140 60 170 Q 55 185 50 175 Q 45 165 55 155 Q 60 150 60 170"/>
+                    <path class="glow-layer glow-2" stroke="url(#gradient2)" 
+                          d="M 55 165 Q 25 135 32 95 Q 38 45 78 25 Q 128 5 158 48 Q 188 100 155 142 Q 122 184 92 162 Q 62 140 55 165 Q 48 180 45 172 Q 40 160 52 150 Q 58 145 55 165"/>
+                    <path class="glow-layer glow-3" stroke="url(#gradient3)" 
+                          d="M 65 175 Q 35 145 38 105 Q 42 55 82 35 Q 132 15 162 55 Q 192 105 162 145 Q 132 185 102 165 Q 72 145 65 175 Q 58 190 55 180 Q 50 168 60 158 Q 66 153 65 175"/>
+                    
+                    <!-- Main glass pipe paths -->
+                    <path class="glass-pipe pipe-1" stroke="url(#gradient1)" filter="url(#glow1)"
+                          d="M 60 170 Q 30 140 35 100 Q 40 50 80 30 Q 130 10 160 50 Q 190 100 160 140 Q 130 180 100 160 Q 70 140 60 170 Q 55 185 50 175 Q 45 165 55 155 Q 60 150 60 170"/>
+                    <path class="glass-pipe pipe-2" stroke="url(#gradient2)" filter="url(#glow1)"
+                          d="M 55 165 Q 25 135 32 95 Q 38 45 78 25 Q 128 5 158 48 Q 188 100 155 142 Q 122 184 92 162 Q 62 140 55 165 Q 48 180 45 172 Q 40 160 52 150 Q 58 145 55 165"/>
+                    <path class="glass-pipe pipe-3" stroke="url(#gradient3)" filter="url(#glow1)"
+                          d="M 65 175 Q 35 145 38 105 Q 42 55 82 35 Q 132 15 162 55 Q 192 105 162 145 Q 132 185 102 165 Q 72 145 65 175 Q 58 190 55 180 Q 50 168 60 158 Q 66 153 65 175"/>
+                    
+                    <!-- Inner highlight for glass effect -->
+                    <path class="inner-glow" stroke="rgba(255,255,255,0.4)" stroke-width="1"
+                          d="M 60 170 Q 30 140 35 100 Q 40 50 80 30 Q 130 10 160 50 Q 190 100 160 140 Q 130 180 100 160 Q 70 140 60 170"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="modeSelect">Choose Practice Mode:</label>
+            <select id="modeSelect">
+                <option value="General">General Conversation</option>
+                <option value="Tech">Technical Interview</option>
+                <option value="UPSC">UPSC Interview</option>
+            </select>
+            <div class="mode-description" id="modeDescription">
+                Practice casual conversations and improve your communication skills in a friendly environment.
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="startButton">Start Practice</button>
+            <button id="stopButton" disabled>Stop</button>
+        </div>
+
+        <div id="status" class="status hidden"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        let mediaStream = null;
+        let audioContext = null;
+        let processor = null;
+        let source = null;
+
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const modeSelect = document.getElementById('modeSelect');
+        const statusDiv = document.getElementById('status');
+        const modeDescription = document.getElementById('modeDescription');
+        const voiceCircle = document.getElementById('voiceCircle');
+
+        // Voice circle animation states
+        function setCircleState(state) {
+            voiceCircle.className = 'voice-circle ' + state;
+        }
+
+        // Mode descriptions
+        const modeDescriptions = {
+            General: 'Practice casual conversations and improve your communication skills in a friendly environment.',
+            Tech: 'Prepare for technical interviews with questions on programming, algorithms, and system design.',
+            UPSC: 'Practice for UPSC interviews with questions on current affairs, polity, economy, and general knowledge.'
+        };
+
+        // Update mode description when selection changes
+        modeSelect.addEventListener('change', () => {
+            modeDescription.textContent = modeDescriptions[modeSelect.value];
+        });
+
+        function showStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.classList.remove('hidden');
+        }
+
+        function hideStatus() {
+            statusDiv.classList.add('hidden');
+        }
+
+        async function startPractice() {
+            try {
+                showStatus('Requesting microphone access...', 'info');
+
+                // Get microphone access
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        sampleRate: 16000
+                    }
+                });
+
+                showStatus('Connecting to server...', 'info');
+
+                // Connect to WebSocket server
+                // Use wss:// for HTTPS, ws:// for HTTP
+                const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${wsProtocol}//${window.location.hostname}:3000`;
+                ws = new WebSocket(wsUrl);
+
+                ws.onopen = () => {
+                    console.log('Connected to server');
+                    
+                    // Send selected mode
+                    ws.send(JSON.stringify({
+                        type: 'mode',
+                        mode: modeSelect.value
+                    }));
+
+                    // Start the session
+                    ws.send(JSON.stringify({
+                        type: 'start'
+                    }));
+                };
+
+                ws.onmessage = async (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        
+                        if (data.type === 'ready') {
+                            showStatus('Connected! Start speaking...', 'success');
+                            startButton.disabled = true;
+                            stopButton.disabled = false;
+                            modeSelect.disabled = true;
+                            setCircleState('listening');
+                            
+                            // Start audio processing
+                            setupAudioProcessing();
+                        } else if (data.type === 'error') {
+                            showStatus(`Error: ${data.message}`, 'error');
+                            setCircleState('idle');
+                            stopPractice();
+                        } else if (data.type === 'close') {
+                            showStatus('Connection closed', 'warning');
+                            setCircleState('idle');
+                            stopPractice();
+                        } else if (data.type === 'audio') {
+                            // Handle audio response from Deepgram
+                            setCircleState('speaking');
+                            playAudio(data.audio);
+                        }
+                    } catch (error) {
+                        // Handle binary audio data
+                        if (event.data instanceof Blob) {
+                            setCircleState('speaking');
+                            playAudioBlob(event.data);
+                        }
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                    showStatus('Connection error', 'error');
+                    stopPractice();
+                };
+
+                ws.onclose = () => {
+                    console.log('WebSocket closed');
+                    if (!statusDiv.textContent.includes('Stopped')) {
+                        showStatus('Connection closed', 'warning');
+                    }
+                    stopPractice();
+                };
+
+            } catch (error) {
+                console.error('Error starting practice:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+                stopPractice();
+            }
+        }
+
+        function setupAudioProcessing() {
+            // Create audio context
+            audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+            source = audioContext.createMediaStreamSource(mediaStream);
+            
+            // Create script processor
+            processor = audioContext.createScriptProcessor(4096, 1, 1);
+            
+            processor.onaudioprocess = (e) => {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    const inputData = e.inputBuffer.getChannelData(0);
+                    
+                    // Convert Float32Array to Int16Array
+                    const int16Data = new Int16Array(inputData.length);
+                    for (let i = 0; i < inputData.length; i++) {
+                        const s = Math.max(-1, Math.min(1, inputData[i]));
+                        int16Data[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                    }
+                    
+                    // Send to server
+                    ws.send(int16Data.buffer);
+                }
+            };
+            
+            source.connect(processor);
+            processor.connect(audioContext.destination);
+        }
+
+        function playAudioBlob(blob) {
+            const audio = new Audio();
+            audio.src = URL.createObjectURL(blob);
+            audio.onended = () => setCircleState('listening');
+            audio.play().catch(err => {
+                console.error('Error playing audio:', err);
+                setCircleState('listening');
+            });
+        }
+
+        function playAudio(base64Audio) {
+            const audio = new Audio('data:audio/wav;base64,' + base64Audio);
+            audio.onended = () => setCircleState('listening');
+            audio.play().catch(err => {
+                console.error('Error playing audio:', err);
+                setCircleState('listening');
+            });
+        }
+
+        function stopPractice() {
+            // Stop audio processing
+            if (processor) {
+                processor.disconnect();
+                processor = null;
+            }
+            
+            if (source) {
+                source.disconnect();
+                source = null;
+            }
+            
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+
+            // Stop media stream
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+
+            // Close WebSocket
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+
+            // Update UI
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            modeSelect.disabled = false;
+            setCircleState('idle');
+            
+            if (!statusDiv.textContent.includes('Error') && !statusDiv.textContent.includes('closed')) {
+                showStatus('Practice session stopped', 'info');
+            }
+        }
+
+        // Event listeners
+        startButton.addEventListener('click', startPractice);
+        stopButton.addEventListener('click', () => {
+            showStatus('Stopping practice session...', 'info');
+            stopPractice();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', stopPractice);
+    </script>
+</body>
+</html>

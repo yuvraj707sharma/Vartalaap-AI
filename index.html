@@ -41,13 +41,196 @@
         .subtitle {
             color: #00f5ff;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 0.95em;
             font-weight: 500;
         }
 
+        /* Animated Glass Pipe Circle */
+        .voice-circle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            height: 180px;
+        }
+
+        .voice-circle {
+            position: relative;
+            width: 160px;
+            height: 160px;
+        }
+
+        .voice-circle svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .glass-pipe {
+            fill: none;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .glow-layer {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.3;
+            filter: blur(4px);
+        }
+
+        .inner-glow {
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.8;
+        }
+
+        .voice-circle.idle .pipe-1 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 0;
+            animation: idleFlow1 6s ease-in-out infinite;
+        }
+
+        .voice-circle.idle .pipe-2 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 100;
+            animation: idleFlow2 6s ease-in-out infinite;
+        }
+
+        .voice-circle.idle .pipe-3 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 200;
+            animation: idleFlow3 6s ease-in-out infinite;
+        }
+
+        .voice-circle.idle .glow-1,
+        .voice-circle.idle .glow-2,
+        .voice-circle.idle .glow-3 {
+            animation: glowIdle 4s ease-in-out infinite;
+        }
+
+        @keyframes idleFlow1 {
+            0%, 100% { stroke-dashoffset: 0; }
+            50% { stroke-dashoffset: -100; }
+        }
+
+        @keyframes idleFlow2 {
+            0%, 100% { stroke-dashoffset: 100; }
+            50% { stroke-dashoffset: 0; }
+        }
+
+        @keyframes idleFlow3 {
+            0%, 100% { stroke-dashoffset: 200; }
+            50% { stroke-dashoffset: 100; }
+        }
+
+        @keyframes glowIdle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.4; }
+        }
+
+        .voice-circle.speaking .pipe-1 {
+            stroke-dasharray: 60 30;
+            animation: speakFlow1 1s linear infinite;
+        }
+
+        .voice-circle.speaking .pipe-2 {
+            stroke-dasharray: 50 40;
+            animation: speakFlow2 1.2s linear infinite;
+        }
+
+        .voice-circle.speaking .pipe-3 {
+            stroke-dasharray: 70 20;
+            animation: speakFlow3 0.8s linear infinite;
+        }
+
+        .voice-circle.speaking .glow-1,
+        .voice-circle.speaking .glow-2,
+        .voice-circle.speaking .glow-3 {
+            animation: glowPulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes speakFlow1 {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -180; }
+        }
+
+        @keyframes speakFlow2 {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -180; }
+        }
+
+        @keyframes speakFlow3 {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -180; }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.3; filter: blur(4px); }
+            50% { opacity: 0.6; filter: blur(6px); }
+        }
+
+        .voice-circle.listening .pipe-1 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 0;
+            animation: listenFlow1 2s ease-in-out infinite;
+        }
+
+        .voice-circle.listening .pipe-2 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 50;
+            animation: listenFlow2 2s ease-in-out infinite 0.3s;
+        }
+
+        .voice-circle.listening .pipe-3 {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 100;
+            animation: listenFlow3 2s ease-in-out infinite 0.6s;
+        }
+
+        .voice-circle.listening .glow-1,
+        .voice-circle.listening .glow-2,
+        .voice-circle.listening .glow-3 {
+            animation: glowListen 2s ease-in-out infinite;
+        }
+
+        @keyframes listenFlow1 {
+            0%, 100% { stroke-dashoffset: 0; opacity: 0.7; }
+            50% { stroke-dashoffset: -50; opacity: 1; }
+        }
+
+        @keyframes listenFlow2 {
+            0%, 100% { stroke-dashoffset: 50; opacity: 0.7; }
+            50% { stroke-dashoffset: 0; opacity: 1; }
+        }
+
+        @keyframes listenFlow3 {
+            0%, 100% { stroke-dashoffset: 100; opacity: 0.7; }
+            50% { stroke-dashoffset: 50; opacity: 1; }
+        }
+
+        @keyframes glowListen {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        .voice-circle.speaking svg {
+            animation: subtleRotate 8s linear infinite;
+        }
+
+        @keyframes subtleRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         label {
@@ -55,7 +238,7 @@
             margin-bottom: 8px;
             color: #ccc;
             font-weight: 600;
-            font-size: 0.95em;
+            font-size: 0.9em;
         }
 
         select {
@@ -63,7 +246,7 @@
             padding: 12px;
             border: 2px solid #333;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             background-color: #252525;
             color: #fff;
             cursor: pointer;
@@ -87,7 +270,7 @@
         .button-group {
             display: flex;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 25px;
         }
 
         button {
@@ -132,6 +315,7 @@
             border-radius: 8px;
             text-align: center;
             font-weight: 600;
+            font-size: 0.9em;
         }
 
         .status.info {
@@ -164,13 +348,13 @@
 
         .mode-description {
             background-color: #252525;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            margin-top: 10px;
-            font-size: 0.85em;
+            margin-top: 8px;
+            font-size: 0.8em;
             color: #888;
             border: 1px solid #333;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .highlight {
@@ -184,23 +368,72 @@
         <h1>🎙️ Vartalaap AI</h1>
         <p class="subtitle">Real-time English Practice with Instant Corrections</p>
 
-        <div class="form-group">
-            <label for="modeSelect">Choose Practice Mode:</label>
-            <select id="modeSelect">
-                <option value="English Practice">🗣️ English Practice (Beginner)</option>
-                <option value="Tech Interview">💻 Technical Interview (IT/Software)</option>
-                <option value="UPSC Interview">🏛️ UPSC Interview (Civil Services)</option>
-                <option value="SSC/Government Exams">📋 SSC/Railway/Banking Interview</option>
-                <option value="Finance Interview">💰 Finance/Banking Interview</option>
-                <option value="Business Interview">💼 Business/MBA Interview</option>
-            </select>
-            <div class="mode-description" id="modeDescription">
-                Practice English speaking with instant corrections. AI will interrupt you when you make mistakes and explain in your language.
+        <!-- Animated Glass Pipe Circle -->
+        <div class="voice-circle-container">
+            <div class="voice-circle idle" id="voiceCircle">
+                <svg viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#0080ff;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#00f5ff;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff00ff;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ff0080;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#cc00ff;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00ff88;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#00ffcc;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#00ff88;stop-opacity:1" />
+                        </linearGradient>
+                        <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <path class="glow-layer glow-1" stroke="url(#gradient1)" 
+                          d="M 60 170 Q 30 140 35 100 Q 40 50 80 30 Q 130 10 160 50 Q 190 100 160 140 Q 130 180 100 160 Q 70 140 60 170 Q 55 185 50 175 Q 45 165 55 155 Q 60 150 60 170"/>
+                    <path class="glow-layer glow-2" stroke="url(#gradient2)" 
+                          d="M 55 165 Q 25 135 32 95 Q 38 45 78 25 Q 128 5 158 48 Q 188 100 155 142 Q 122 184 92 162 Q 62 140 55 165 Q 48 180 45 172 Q 40 160 52 150 Q 58 145 55 165"/>
+                    <path class="glow-layer glow-3" stroke="url(#gradient3)" 
+                          d="M 65 175 Q 35 145 38 105 Q 42 55 82 35 Q 132 15 162 55 Q 192 105 162 145 Q 132 185 102 165 Q 72 145 65 175 Q 58 190 55 180 Q 50 168 60 158 Q 66 153 65 175"/>
+                    
+                    <path class="glass-pipe pipe-1" stroke="url(#gradient1)" filter="url(#glow1)"
+                          d="M 60 170 Q 30 140 35 100 Q 40 50 80 30 Q 130 10 160 50 Q 190 100 160 140 Q 130 180 100 160 Q 70 140 60 170 Q 55 185 50 175 Q 45 165 55 155 Q 60 150 60 170"/>
+                    <path class="glass-pipe pipe-2" stroke="url(#gradient2)" filter="url(#glow1)"
+                          d="M 55 165 Q 25 135 32 95 Q 38 45 78 25 Q 128 5 158 48 Q 188 100 155 142 Q 122 184 92 162 Q 62 140 55 165 Q 48 180 45 172 Q 40 160 52 150 Q 58 145 55 165"/>
+                    <path class="glass-pipe pipe-3" stroke="url(#gradient3)" filter="url(#glow1)"
+                          d="M 65 175 Q 35 145 38 105 Q 42 55 82 35 Q 132 15 162 55 Q 192 105 162 145 Q 132 185 102 165 Q 72 145 65 175 Q 58 190 55 180 Q 50 168 60 158 Q 66 153 65 175"/>
+                    
+                    <path class="inner-glow" stroke="rgba(255,255,255,0.4)" stroke-width="1"
+                          d="M 60 170 Q 30 140 35 100 Q 40 50 80 30 Q 130 10 160 50 Q 190 100 160 140 Q 130 180 100 160 Q 70 140 60 170"/>
+                </svg>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="languageSelect">Your Native Language (for corrections):</label>
+            <label for="modeSelect">Choose Practice Mode:</label>
+            <select id="modeSelect">
+                <option value="English Practice">🗣️ English Practice (Beginner)</option>
+                <option value="Tech Interview">💻 Technical Interview</option>
+                <option value="UPSC Interview">🏛️ UPSC Interview</option>
+                <option value="SSC/Government Exams">📋 SSC/Railway/Banking</option>
+                <option value="Finance Interview">💰 Finance/Banking</option>
+                <option value="Business Interview">💼 Business/MBA</option>
+            </select>
+            <div class="mode-description" id="modeDescription">
+                AI will <span class="highlight">interrupt you immediately</span> when you make mistakes and explain in your language.
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="languageSelect">Your Native Language:</label>
             <select id="languageSelect">
                 <option value="Hindi">हिंदी (Hindi)</option>
                 <option value="Tamil">தமிழ் (Tamil)</option>
@@ -213,7 +446,7 @@
                 <option value="Malayalam">മലയാളം (Malayalam)</option>
             </select>
             <div class="mode-description">
-                AI will explain your mistakes in this language for better understanding.
+                AI will explain your mistakes in this language.
             </div>
         </div>
 
@@ -231,6 +464,7 @@
         let audioContext = null;
         let processor = null;
         let source = null;
+        let audioProcessingStarted = false;
 
         const startButton = document.getElementById('startButton');
         const stopButton = document.getElementById('stopButton');
@@ -238,18 +472,115 @@
         const languageSelect = document.getElementById('languageSelect');
         const statusDiv = document.getElementById('status');
         const modeDescription = document.getElementById('modeDescription');
+        const voiceCircle = document.getElementById('voiceCircle');
 
-        // Mode descriptions
+        function setCircleState(state) {
+            voiceCircle.className = 'voice-circle ' + state;
+        }
+
         const modeDescriptions = {
-            'English Practice': 'Practice English speaking with instant corrections. AI will <span class="highlight">interrupt you immediately</span> when you make mistakes and explain in your language.',
-            'Tech Interview': 'Prepare for tech interviews (DSA, System Design, Projects). AI corrects your English <span class="highlight">while asking technical questions</span>.',
-            'UPSC Interview': 'Practice for UPSC/IAS interviews. AI corrects your English and asks questions on <span class="highlight">current affairs, polity, and general knowledge</span>.',
-            'SSC/Government Exams': 'Prepare for SSC, Railway, Banking interviews. AI helps you <span class="highlight">speak confidently in English</span> with instant corrections.',
-            'Finance Interview': 'Practice for banking and finance job interviews. AI corrects your English while discussing <span class="highlight">financial concepts</span>.',
-            'Business Interview': 'Prepare for MBA and corporate interviews. AI corrects your English during <span class="highlight">business case discussions</span>.'
+            'English Practice': 'AI will <span class="highlight">interrupt you immediately</span> when you make mistakes and explain in your language.',
+            'Tech Interview': 'Practice tech interviews. AI corrects your English <span class="highlight">while asking technical questions</span>.',
+            'UPSC Interview': 'Practice UPSC interviews. AI corrects English and asks <span class="highlight">current affairs questions</span>.',
+            'SSC/Government Exams': 'Practice government job interviews. AI helps you <span class="highlight">speak confidently</span>.',
+            'Finance Interview': 'Practice finance interviews. AI corrects English while discussing <span class="highlight">financial concepts</span>.',
+            'Business Interview': 'Practice MBA interviews. AI corrects English during <span class="highlight">business discussions</span>.'
         };
+        
+        // System prompt generator
+        function getSystemPrompt() {
+            const mode = modeSelect.value;
+            const language = languageSelect.value;
+            const languageInstruction = `When correcting mistakes, explain in ${language}. Format: "Wait! You said 'X'. Correct: 'Y'. ${language} में: [explanation]. Continue."`;
+            
+            const prompts = {
+                'English Practice': `You are a strict, professional Indian SSB Interviewer and Language Drill Sergeant. Your goal is to make the candidate speak perfect, fluent English under pressure.
 
-        // Update mode description when selection changes
+YOUR BEHAVIOR RULES:
+1. THE "STOP" RULE: If the user makes a grammar mistake (e.g., "I has done it"), interrupt IMMEDIATELY. Say: "STOP. Grammar error. It is 'I HAVE done it'. Repeat the sentence correctly. NOW."
+2. FORCE REPETITION: Do not move to the next question until the user repeats the corrected sentence properly.
+3. STAMMERING: If the user says "Umm", "Uhh", or pauses, say: "Remove the fillers. Speak clearly. Try again."
+4. HINGLISH: If the user speaks in Hindi, translate it for them instantly and say: "In English, we say [Translation]. Now say it in English." If user continuously makes mistakes (2 times in a row) explain in ${language}.
+5. TONE: Commanding, serious, and fast. Do not be polite. Do not say "Please." Be a tough teacher.
+6. ROLEPLAY: When user says let's do a roleplay, do the roleplay that user said. If user does not mention a particular roleplay and just says let's speak/practice in English, then do a roleplay from yourself and help user to practice speaking English.
+7. LANGUAGE BRIDGE: If the user switches to Hindi or another Indian language, briefly explain in that language, then say: "Now answer in English."
+
+CONTEXT: The user is a student preparing for a high-stakes job interview. If they fail here, they fail in real life. Push them to be perfect.`,
+
+                'Tech Interview': `You are a technical interviewer AND English tutor for Indian students preparing for tech jobs.
+
+Dual Role:
+1. Conduct technical interview (DSA, System Design, Coding, Projects)
+2. INTERRUPT and correct English mistakes immediately
+
+INTERRUPT when you hear:
+- Grammar errors while explaining technical concepts
+- Wrong technical terminology pronunciation
+- Unclear or broken English explanations
+
+Correction Format:
+"Wait! [point mistake] → [correction] → ${language} में: [explanation] → Continue your answer."
+
+${languageInstruction}
+Be professional but strict on English.`,
+
+                'UPSC Interview': `You are a UPSC interviewer AND English tutor preparing candidates for civil services.
+
+Dual Role:
+1. Conduct UPSC-style interview (Current Affairs, Polity, Ethics, General Knowledge)
+2. INTERRUPT for English mistakes immediately
+
+UPSC requires:
+- Clear articulation
+- Proper grammar
+- Formal language
+
+Correction Format:
+"Excuse me! [mistake] → [correction] → ${language} में: [explanation] → Please continue."
+
+${languageInstruction}
+Maintain formal tone. Correct strictly.`,
+
+                'Finance Interview': `You are a finance industry interviewer AND English tutor for banking/finance job aspirants.
+
+Dual Role:
+1. Conduct finance interview (Markets, Banking, Accounting, Analysis)
+2. INTERRUPT for English mistakes immediately
+
+Correction Format:
+"Hold on! [mistake] → [correction] → ${language} में: [explanation] → Continue."
+
+${languageInstruction}
+Be professional. Correct immediately.`,
+
+                'SSC/Government Exams': `You are a government job interviewer AND English tutor for SSC, Railway, Banking exam candidates.
+
+Dual Role:
+1. Conduct government job interview (General Awareness, Reasoning, Current Affairs)
+2. INTERRUPT for English mistakes immediately
+
+Correction Format:
+"Ruko! [mistake] → [correction] → ${language} में: [explanation] → Aage bolo."
+
+${languageInstruction}
+Be supportive but strict.`,
+
+                'Business Interview': `You are a business/management interviewer AND English tutor for MBA/corporate job aspirants.
+
+Dual Role:
+1. Conduct business interview (Management, Strategy, Leadership, Case Studies)
+2. INTERRUPT for English mistakes immediately
+
+Correction Format:
+"Pardon! [mistake] → [correction] → ${language} में: [explanation] → Please proceed."
+
+${languageInstruction}
+Be professional. Correct precisely.`
+            };
+            
+            return prompts[mode] || prompts['English Practice'];
+        }
+
         modeSelect.addEventListener('change', () => {
             modeDescription.innerHTML = modeDescriptions[modeSelect.value];
         });
@@ -260,80 +591,148 @@
             statusDiv.classList.remove('hidden');
         }
 
-        function hideStatus() {
-            statusDiv.classList.add('hidden');
-        }
-
         async function startPractice() {
             try {
                 showStatus('Requesting microphone access...', 'info');
 
-                // Get microphone access
+                // Create AudioContext first to know the sample rate
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                console.log('AudioContext created with sample rate:', audioContext.sampleRate);
+
                 mediaStream = await navigator.mediaDevices.getUserMedia({
                     audio: {
                         echoCancellation: true,
                         noiseSuppression: true,
                         autoGainControl: true,
-                        sampleRate: 16000
+                        channelCount: 1
                     }
                 });
 
                 showStatus('Connecting to server...', 'info');
 
-                // Connect to WebSocket server
                 const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                 const wsUrl = `${wsProtocol}//${window.location.hostname}:3000`;
                 ws = new WebSocket(wsUrl);
+                ws.binaryType = 'arraybuffer'; // Important: receive binary as ArrayBuffer
 
                 ws.onopen = () => {
                     console.log('Connected to server');
                     
-                    // Send selected mode
                     ws.send(JSON.stringify({
                         type: 'mode',
                         mode: modeSelect.value
                     }));
 
-                    // Send selected language
                     ws.send(JSON.stringify({
                         type: 'language',
                         language: languageSelect.value
                     }));
 
-                    // Start the session
                     ws.send(JSON.stringify({
                         type: 'start'
                     }));
                 };
 
                 ws.onmessage = async (event) => {
+                    // Handle binary audio data from Deepgram
+                    if (event.data instanceof Blob || event.data instanceof ArrayBuffer) {
+                        setCircleState('speaking');
+                        playPCMAudio(event.data);
+                        return;
+                    }
+                    
                     try {
                         const data = JSON.parse(event.data);
+                        console.log('Received message:', data.type);
                         
-                        if (data.type === 'ready') {
-                            showStatus('Connected! Start speaking in English...', 'success');
-                            startButton.disabled = true;
-                            stopButton.disabled = false;
-                            modeSelect.disabled = true;
-                            languageSelect.disabled = true;
+                        // When we get Welcome, send Settings
+                        if (data.type === 'Welcome') {
+                            console.log('Received Welcome, sending Settings...');
+                            showStatus('Sending settings...', 'info');
                             
-                            // Start audio processing
-                            setupAudioProcessing();
+                            // We downsample to 16kHz before sending to Deepgram
+                            const targetSampleRate = 16000;
+                            console.log('Audio will be sent at:', targetSampleRate, 'Hz');
+                            
+                            const settings = {
+                                type: 'Settings',
+                                audio: {
+                                    input: {
+                                        encoding: 'linear16',
+                                        sample_rate: targetSampleRate
+                                    },
+                                    output: {
+                                        encoding: 'linear16',
+                                        sample_rate: 24000,
+                                        container: 'none'
+                                    }
+                                },
+                                agent: {
+                                    language: 'en',
+                                    listen: {
+                                        provider: {
+                                            type: 'deepgram',
+                                            version: 'v1',
+                                            model: 'nova-2'
+                                        }
+                                    },
+                                    think: {
+                                        provider: {
+                                            type: 'open_ai',
+                                            model: 'gpt-4o-mini'
+                                        },
+                                        prompt: getSystemPrompt()
+                                    },
+                                    speak: {
+                                        provider: {
+                                            type: 'deepgram',
+                                            model: 'aura-2-odysseus-en'
+                                        }
+                                    },
+                                    greeting: 'Attention! I am your SSB Interviewer. You will speak in English only. If you make mistakes, I will stop you and make you repeat. Begin. Introduce yourself.'
+                                }
+                            };
+                            
+                            console.log('Sending Settings:', JSON.stringify(settings, null, 2));
+                            ws.send(JSON.stringify(settings));
+                        } else if (data.type === 'SettingsApplied') {
+                            // Only setup audio once when SettingsApplied (not 'ready')
+                            if (!audioProcessingStarted) {
+                                audioProcessingStarted = true;
+                                showStatus('Connected! Start speaking in English...', 'success');
+                                startButton.disabled = true;
+                                stopButton.disabled = false;
+                                modeSelect.disabled = true;
+                                languageSelect.disabled = true;
+                                setCircleState('listening');
+                                
+                                await setupAudioProcessing();
+                            }
+                        } else if (data.type === 'ready') {
+                            // Ignore ready message, we use SettingsApplied
                         } else if (data.type === 'error') {
                             showStatus(`Error: ${data.message}`, 'error');
+                            setCircleState('idle');
                             stopPractice();
                         } else if (data.type === 'close') {
                             showStatus('Connection closed', 'warning');
+                            setCircleState('idle');
                             stopPractice();
-                        } else if (data.type === 'audio') {
-                            // Handle audio response from Deepgram
-                            playAudio(data.audio);
+                        } else if (data.type === 'AgentAudioDone') {
+                            // Agent finished speaking
+                            setTimeout(() => setCircleState('listening'), 200);
+                        } else if (data.type === 'UserStartedSpeaking') {
+                            setCircleState('listening');
+                        } else if (data.type === 'ConversationText') {
+                            console.log('Transcript:', data.role, '-', data.content);
+                        } else if (data.type === 'Error') {
+                            console.error('Deepgram Error:', data.description);
+                            showStatus(`Error: ${data.description}`, 'error');
+                        } else if (data.type === 'Warning') {
+                            console.warn('Deepgram Warning:', data.description);
                         }
                     } catch (error) {
-                        // Handle binary audio data
-                        if (event.data instanceof Blob) {
-                            playAudioBlob(event.data);
-                        }
+                        console.log('Message parse error:', error);
                     }
                 };
 
@@ -358,47 +757,171 @@
             }
         }
 
-        function setupAudioProcessing() {
-            // Create audio context
-            audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        async function setupAudioProcessing() {
+            console.log('Setting up audio processing...');
+            
+            // AudioContext should already exist from startPractice
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            // IMPORTANT: Resume AudioContext (required due to browser autoplay policy)
+            if (audioContext.state === 'suspended') {
+                console.log('AudioContext suspended, resuming...');
+                await audioContext.resume();
+                console.log('AudioContext resumed:', audioContext.state);
+            }
+            
+            if (!mediaStream) {
+                console.error('No media stream available!');
+                showStatus('Error: Microphone not available', 'error');
+                return;
+            }
+            
+            console.log('Media stream tracks:', mediaStream.getTracks().map(t => ({
+                kind: t.kind,
+                enabled: t.enabled,
+                muted: t.muted,
+                readyState: t.readyState
+            })));
+            
+            const inputSampleRate = audioContext.sampleRate; // Usually 48000
+            const targetSampleRate = 16000; // Deepgram expects 16kHz
+            const downsampleRatio = inputSampleRate / targetSampleRate;
+            
+            console.log(`Resampling from ${inputSampleRate}Hz to ${targetSampleRate}Hz (ratio: ${downsampleRatio})`);
+            
             source = audioContext.createMediaStreamSource(mediaStream);
             
-            // Create script processor
+            // Use larger buffer for more reliable processing
             processor = audioContext.createScriptProcessor(4096, 1, 1);
+            
+            let audioChunkCount = 0;
             
             processor.onaudioprocess = (e) => {
                 if (ws && ws.readyState === WebSocket.OPEN) {
                     const inputData = e.inputBuffer.getChannelData(0);
                     
-                    // Convert Float32Array to Int16Array
-                    const int16Data = new Int16Array(inputData.length);
+                    // Check if we're getting actual audio (not just silence)
+                    let maxSample = 0;
                     for (let i = 0; i < inputData.length; i++) {
-                        const s = Math.max(-1, Math.min(1, inputData[i]));
-                        int16Data[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                        maxSample = Math.max(maxSample, Math.abs(inputData[i]));
                     }
                     
-                    // Send to server
-                    ws.send(int16Data.buffer);
+                    // Downsample from 48kHz to 16kHz using averaging (anti-aliasing)
+                    const ratio = Math.round(downsampleRatio);
+                    const outputLength = Math.floor(inputData.length / ratio);
+                    
+                    // Use DataView for explicit little-endian byte order
+                    const buffer = new ArrayBuffer(outputLength * 2);
+                    const view = new DataView(buffer);
+                    
+                    for (let i = 0; i < outputLength; i++) {
+                        // Average samples for anti-aliasing
+                        let sum = 0;
+                        const startIdx = i * ratio;
+                        for (let j = 0; j < ratio; j++) {
+                            sum += inputData[startIdx + j] || 0;
+                        }
+                        const avg = sum / ratio;
+                        
+                        // Clamp and convert to 16-bit signed integer
+                        const s = Math.max(-1, Math.min(1, avg));
+                        const sample = s < 0 ? Math.floor(s * 32768) : Math.floor(s * 32767);
+                        
+                        // Write as little-endian 16-bit integer
+                        view.setInt16(i * 2, sample, true);
+                    }
+                    
+                    // Send as binary
+                    ws.send(buffer);
+                    
+                    audioChunkCount++;
+                    
+                    // Log every 50th chunk
+                    if (audioChunkCount % 50 === 0) {
+                        console.log(`🎤 Sent ${audioChunkCount} chunks (${buffer.byteLength} bytes @16kHz), max amplitude: ${maxSample.toFixed(4)}`);
+                    }
+                } else if (audioChunkCount === 0) {
+                    console.log('⚠️ WebSocket not open, state:', ws?.readyState);
                 }
             };
             
             source.connect(processor);
             processor.connect(audioContext.destination);
+            console.log('✅ Audio processing started - microphone at', inputSampleRate, 'Hz, sending at', targetSampleRate, 'Hz');
+            console.log('AudioContext state:', audioContext.state);
         }
 
-        function playAudioBlob(blob) {
-            const audio = new Audio();
-            audio.src = URL.createObjectURL(blob);
-            audio.play().catch(err => console.error('Error playing audio:', err));
+        // Audio playback queue for smooth playback
+        let playbackContext = null;
+        let audioQueue = [];
+        let isPlaying = false;
+        
+        async function playPCMAudio(data) {
+            try {
+                // Get array buffer from blob or use directly
+                let arrayBuffer;
+                if (data instanceof Blob) {
+                    arrayBuffer = await data.arrayBuffer();
+                } else {
+                    arrayBuffer = data;
+                }
+                
+                // Create playback context if needed (at 24kHz to match Deepgram output)
+                if (!playbackContext || playbackContext.state === 'closed') {
+                    playbackContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+                }
+                
+                // Resume context if suspended (browser autoplay policy)
+                if (playbackContext.state === 'suspended') {
+                    await playbackContext.resume();
+                }
+                
+                // Convert Int16 PCM to Float32
+                const int16Array = new Int16Array(arrayBuffer);
+                const float32Array = new Float32Array(int16Array.length);
+                for (let i = 0; i < int16Array.length; i++) {
+                    float32Array[i] = int16Array[i] / 32768.0;
+                }
+                
+                // Create audio buffer at 24kHz
+                const audioBuffer = playbackContext.createBuffer(1, float32Array.length, 24000);
+                audioBuffer.getChannelData(0).set(float32Array);
+                
+                // Queue the buffer
+                audioQueue.push(audioBuffer);
+                
+                // Start playing if not already
+                if (!isPlaying) {
+                    playNextInQueue();
+                }
+            } catch (err) {
+                console.error('Error playing PCM audio:', err);
+            }
         }
-
-        function playAudio(base64Audio) {
-            const audio = new Audio('data:audio/wav;base64,' + base64Audio);
-            audio.play().catch(err => console.error('Error playing audio:', err));
+        
+        function playNextInQueue() {
+            if (audioQueue.length === 0) {
+                isPlaying = false;
+                return;
+            }
+            
+            isPlaying = true;
+            const buffer = audioQueue.shift();
+            
+            const source = playbackContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(playbackContext.destination);
+            source.onended = playNextInQueue;
+            source.start();
         }
 
         function stopPractice() {
-            // Stop audio processing
+            console.log('Stopping practice session...');
+            audioProcessingStarted = false;
+            
+            // First, stop audio processing to prevent sending more audio
             if (processor) {
                 processor.disconnect();
                 processor = null;
@@ -410,41 +933,66 @@
             }
             
             if (audioContext) {
-                audioContext.close();
+                audioContext.close().catch(() => {});
                 audioContext = null;
             }
+            
+            // Clean up playback context
+            if (playbackContext) {
+                playbackContext.close().catch(() => {});
+                playbackContext = null;
+            }
+            audioQueue = [];
+            isPlaying = false;
 
-            // Stop media stream
+            // Stop microphone
             if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream.getTracks().forEach(track => {
+                    track.stop();
+                    console.log('Microphone track stopped');
+                });
                 mediaStream = null;
             }
 
-            // Close WebSocket
-            if (ws) {
-                ws.close();
-                ws = null;
+            // Send stop message to server before closing WebSocket
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                try {
+                    ws.send(JSON.stringify({ type: 'stop' }));
+                    console.log('Stop message sent to server');
+                } catch (e) {
+                    console.log('Could not send stop message:', e);
+                }
+                // Give server time to process, then close
+                setTimeout(() => {
+                    if (ws) {
+                        ws.close();
+                        ws = null;
+                    }
+                }, 100);
+            } else {
+                if (ws) {
+                    ws.close();
+                    ws = null;
+                }
             }
 
-            // Update UI
             startButton.disabled = false;
             stopButton.disabled = true;
             modeSelect.disabled = false;
             languageSelect.disabled = false;
+            setCircleState('idle');
             
             if (!statusDiv.textContent.includes('Error') && !statusDiv.textContent.includes('closed')) {
                 showStatus('Practice session stopped', 'info');
             }
         }
 
-        // Event listeners
         startButton.addEventListener('click', startPractice);
         stopButton.addEventListener('click', () => {
             showStatus('Stopping practice session...', 'info');
             stopPractice();
         });
 
-        // Cleanup on page unload
         window.addEventListener('beforeunload', stopPractice);
     </script>
 </body>

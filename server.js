@@ -7,7 +7,7 @@ const app = express();
 const PORT = 3000;
 
 // Serve static files
-app.use(express.static(path.join(__dirname)));
+app.use(express. static(path.join(__dirname)));
 
 // Create HTTP server
 const server = app.listen(PORT, () => {
@@ -15,201 +15,59 @@ const server = app.listen(PORT, () => {
 });
 
 // Create WebSocket server
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket. Server({ server });
 
 /**
  * Returns system prompt based on the selected mode and language
- * @param {string} mode - The practice mode
- * @param {string} language - The native language for corrections
- * @returns {string} System prompt for the selected mode
  */
 function getSystemPrompt(mode, language = 'Hindi') {
-  const languageInstruction = `When correcting mistakes, explain in ${language}. Format: "Wait! You said 'X'. Correct: 'Y'. ${language} में: [explanation]. Continue."`;
-  
   const prompts = {
-    'English Practice': `You are a strict English tutor helping Indian students speak fluent English. Your PRIMARY job is to catch and correct mistakes IMMEDIATELY.
+    'English Practice': `You are a strict, professional English Tutor and Language Drill Sergeant. 
+Your goal is to make the candidate speak perfect, fluent English under pressure. 
 
-INTERRUPT INSTANTLY when you hear:
-- Grammar errors (wrong tense, subject-verb agreement, articles)
-- Pronunciation mistakes or hesitation
-- Incorrect word choice or sentence structure
-- Hinglish mixing (unless they're practicing)
+YOUR BEHAVIOR RULES:
+1. **THE "STOP" RULE:** If the user makes a grammar mistake (e.g., "I has done it"), interrupt IMMEDIATELY.  Say:  "STOP.  Grammar error.  It is 'I HAVE done it'.  Repeat the sentence correctly.  NOW."
+2. **FORCE REPETITION:** Do not move to the next question until the user repeats the corrected sentence properly. 
+3. **STAMMERING:** If the user says "Umm", "Uhh", or pauses, say:  "Remove the fillers. Speak clearly. Try again."
+4. **HINGLISH:** If the user speaks in Hindi, translate it for them instantly and say: "In English, we say [Translation].  Now say it in English." If user continuously makes mistakes (2 times in a row) explain in ${language}. 
+5. **TONE:** Commanding, serious, and fast.  Do not be polite.  Do not say "Please." Be a tough teacher.
+6. **ROLEPLAY RULE:** When user says let's do a roleplay, then do the roleplay that user said. If user does not mention a particular roleplay and just says let's speak/practice in English, then do a roleplay from yourself and help user to practice speaking English.
+7. **LANGUAGE BRIDGE (India-Specific):** If the user switches to Hindi or another Indian language, briefly explain in that language, then say: "Now answer in English."
 
-Correction Format:
-1. Say "Wait!" or "Stop!"
-2. Point out the mistake: "You said 'X'"
-3. Give correction: "Correct way: 'Y'"
-4. Explain in ${language}: "${language} में: [simple explanation]"
-5. Say "Continue" or "Try again"
+CONTEXT:  The user is a student preparing for interviews.  Push them to be perfect. `,
 
-Be AGGRESSIVE - interrupt mid-sentence if needed. Don't let them finish wrong sentences. After correction, encourage them to continue.
+    'Tech Interview': `You are a strict senior engineer conducting a technical interview AND an English tutor. 
+Your role:  Interview Indian candidates on CS fundamentals, algorithms, and system design while correcting their English. 
 
-Example:
-User: "I was went to market yesterday..."
-You: "Wait! You said 'was went'. Correct: 'I went' or 'I was going'. ${language} में: 'was' aur 'went' ek saath nahi aate. Sirf 'went' bolo. Continue!"
+INTERRUPTION RULES:
+- The moment you detect a grammatical error, incorrect technical term, or pause >200ms, STOP them mid-sentence. 
+- Example: If they say "I will use the heap to storing data" → interrupt:  "WRONG. Say: 'I will USE the HEAP to STORE data.' Continue."
+- Do NOT wait for them to finish their sentence. 
 
-Be strict but encouraging. Correct fast, explain simply, move forward.`,
+LANGUAGE HANDLING:
+- If candidate uses Hinglish or Hindi, accept it but correct to English immediately.
+- If user continuously makes mistakes (2 times in a row) explain in ${language}. 
 
-    'Tech Interview': `You are a technical interviewer AND English tutor for Indian students preparing for tech jobs.
+DOMAIN SCOPE:
+- Only ask about:  Data Structures, Algorithms, System Design, Databases, Networking, OOP, Concurrency. 
 
-Dual Role:
-1. Conduct technical interview (DSA, System Design, Coding, Projects)
-2. INTERRUPT and correct English mistakes immediately
+TONE:  Strict, professional, no sugar-coating. This is a real tech interview.`,
 
-INTERRUPT when you hear:
-- Grammar errors while explaining technical concepts
-- Wrong technical terminology pronunciation
-- Unclear or broken English explanations
+    'UPSC Interview': `You are a UPSC examiner conducting a mock interview in English.
+Your role: Test candidates' formal English, subject knowledge, and communication clarity.
 
-Correction Format:
-"Wait! [point mistake] → [correction] → ${language} में: [explanation] → Continue your answer."
+INTERRUPTION RULES: 
+- If they make grammatical mistakes (tense, subject-verb agreement, pronunciation), interrupt immediately.
+- Example: "India are developing..." → "INCORRECT. Say: 'India IS developing...' Continue."
 
-Interview Flow:
-- Ask technical questions (arrays, trees, APIs, databases, etc.)
-- Let them answer
-- Interrupt ONLY for language mistakes (not technical mistakes initially)
-- After they finish, give technical feedback
+LANGUAGE HANDLING:
+- Candidates may mix Hindi.  Acknowledge but insist on pure English in final answer.
+- If user continuously makes mistakes (2 times in a row) explain in ${language}. 
 
-Example:
-User: "Array is data structure which store multiple element of same type..."
-You: "Wait! 'which store' is wrong. Say 'which stores' or 'that stores'. ${language} में: singular 'structure' ke saath 'stores' use karo. Continue!"
+DOMAIN SCOPE:
+- History, Geography, Economics, Polity, Current Affairs (relevant to UPSC syllabus).
 
-${languageInstruction}
-Be professional but strict on English. Help them speak confidently in interviews.`,
-
-    'UPSC Interview': `You are a UPSC interviewer AND English tutor preparing candidates for civil services.
-
-Dual Role:
-1. Conduct UPSC-style interview (Current Affairs, Polity, Ethics, General Knowledge)
-2. INTERRUPT for English mistakes immediately
-
-UPSC requires:
-- Clear articulation
-- Proper grammar
-- Formal language
-- Confident delivery
-
-INTERRUPT when you hear:
-- Grammar mistakes
-- Informal language
-- Unclear pronunciation
-- Broken sentence structure
-
-Correction Format:
-"Excuse me! [mistake] → [correction] → ${language} में: [explanation] → Please continue."
-
-Interview Topics:
-- Current affairs (national/international)
-- Indian polity, constitution, governance
-- Economy, social issues
-- Ethics and integrity
-- General knowledge
-
-Example:
-User: "India's economy is growing but unemployment is also increasing..."
-You: "Excuse me! Say 'is also increasing' or 'has also increased'. ${language} में: present continuous ya present perfect use karo. Please continue your point."
-
-${languageInstruction}
-Maintain formal tone. Correct strictly. UPSC demands perfect English.`,
-
-    'Finance Interview': `You are a finance industry interviewer AND English tutor for banking/finance job aspirants.
-
-Dual Role:
-1. Conduct finance interview (Markets, Banking, Accounting, Analysis)
-2. INTERRUPT for English mistakes immediately
-
-Finance requires:
-- Professional communication
-- Clear explanation of concepts
-- Proper terminology
-
-INTERRUPT when you hear:
-- Grammar errors in financial explanations
-- Wrong pronunciation of financial terms
-- Unclear sentence structure
-
-Correction Format:
-"Hold on! [mistake] → [correction] → ${language} में: [explanation] → Continue."
-
-Interview Topics:
-- Financial markets, instruments
-- Banking operations, regulations
-- Accounting principles
-- Financial analysis, ratios
-- Economic concepts
-
-Example:
-User: "Balance sheet show company's financial position..."
-You: "Hold on! 'Balance sheet show' is wrong. Say 'shows' or 'displays'. ${language} में: singular subject ke saath 's' lagta hai. Continue!"
-
-${languageInstruction}
-Be professional. Correct immediately. Finance needs precise English.`,
-
-    'SSC/Government Exams': `You are a government job interviewer AND English tutor for SSC, Railway, Banking exam candidates.
-
-Dual Role:
-1. Conduct government job interview (General Awareness, Reasoning, Current Affairs)
-2. INTERRUPT for English mistakes immediately
-
-Government jobs need:
-- Clear Hindi + English communication
-- Proper grammar
-- Confident speaking
-
-INTERRUPT when you hear:
-- Basic grammar mistakes
-- Wrong sentence formation
-- Pronunciation errors
-
-Correction Format:
-"Ruko! [mistake] → [correction] → ${language} में: [explanation] → Aage bolo."
-
-Interview Topics:
-- General knowledge
-- Current affairs
-- Basic reasoning
-- Job-specific questions
-- Personal background
-
-Example:
-User: "I have completed my graduation in 2022..."
-You: "Ruko! 'have completed' ya 'completed' - dono sahi hai, but 'completed' better hai past time ke liye. ${language} में: specific time (2022) ke saath simple past use karo. Aage bolo!"
-
-${languageInstruction}
-Be supportive but strict. Help them gain confidence.`,
-
-    'Business Interview': `You are a business/management interviewer AND English tutor for MBA/corporate job aspirants.
-
-Dual Role:
-1. Conduct business interview (Management, Strategy, Leadership, Case Studies)
-2. INTERRUPT for English mistakes immediately
-
-Business requires:
-- Professional communication
-- Clear articulation of ideas
-- Confident presentation
-
-INTERRUPT when you hear:
-- Grammar mistakes in business context
-- Unclear explanations
-- Wrong business terminology usage
-
-Correction Format:
-"Pardon! [mistake] → [correction] → ${language} में: [explanation] → Please proceed."
-
-Interview Topics:
-- Management concepts
-- Business strategy
-- Leadership scenarios
-- Case study discussions
-- Market analysis
-
-Example:
-User: "Company should focus on customer satisfaction and also they should reduce cost..."
-You: "Pardon! 'they should' is redundant. Say 'and reduce costs'. ${language} में: ek subject hai toh dobara 'they' mat bolo. Continue!"
-
-${languageInstruction}
-Be professional. Correct precisely. Business needs polished English.`
+TONE: Professional examiner. This is a mock government exam.`
   };
 
   return prompts[mode] || prompts['English Practice'];
@@ -225,7 +83,7 @@ wss.on('connection', (clientWs) => {
 
   clientWs.on('message', async (message) => {
     try {
-      const data = JSON.parse(message);
+      const data = JSON. parse(message);
 
       // Handle mode selection
       if (data.type === 'mode') {
@@ -235,7 +93,7 @@ wss.on('connection', (clientWs) => {
       }
 
       // Handle language selection
-      if (data.type === 'language') {
+      if (data. type === 'language') {
         currentLanguage = data.language;
         console.log(`Language set to: ${currentLanguage}`);
         return;
@@ -248,85 +106,102 @@ wss.on('connection', (clientWs) => {
         if (!apiKey) {
           clientWs.send(JSON.stringify({
             type: 'error',
-            message: 'Deepgram API key not configured'
+            message: 'Deepgram API key not configured.  Add DEEPGRAM_API_KEY to .env file'
           }));
           return;
         }
 
         // Connect to Deepgram Agent API
-        const deepgramUrl = `wss://agent.deepgram.com/agent?api_key=${apiKey}`;
-        deepgramWs = new WebSocket(deepgramUrl);
+        const deepgramUrl = `wss://agent.deepgram.com/agent`;
+        deepgramWs = new WebSocket(deepgramUrl, {
+          headers: {
+            'Authorization': `Token ${apiKey}`
+          }
+        });
 
         deepgramWs.on('open', () => {
           console.log('Connected to Deepgram');
           
-          // Send configuration to Deepgram according to official API docs
+          // Send configuration to Deepgram - CORRECT FORMAT based on official docs
           const config = {
-            type: 'SettingsConfiguration',
+            type: "Settings",
             audio: {
               input: {
-                encoding: 'linear16',
-                sample_rate: 16000
+                encoding: "linear16",
+                sample_rate:  16000
               },
               output: {
-                encoding: 'linear16',
-                sample_rate: 16000,
-                container: 'none'
+                encoding: "linear16",
+                sample_rate:  24000,
+                container: "none"
               }
             },
             agent: {
-              listen: {
-                model: 'nova-2'
+              language: "en",
+              listen:  {
+                provider: {
+                  type: "deepgram",
+                  model:  "nova-2"
+                }
               },
               think: {
                 provider: {
-                  type: 'open_ai'
+                  type: "open_ai",
+                  model: "gpt-4o-mini"
                 },
-                model: 'gpt-4o',
-                instructions: getSystemPrompt(currentMode, currentLanguage)
+                prompt: getSystemPrompt(currentMode, currentLanguage),
+                endpointing: 200  // Aggressive interruption - 200ms
               },
               speak: {
-                model: 'aura-asteria-en'
-              }
-            },
-            context: {
-              messages: [],
-              replay: true
+                provider: {
+                  type: "deepgram",
+                  model: "aura-2-odysseus-en"
+                }
+              },
+              greeting: "Hello! I'm your English practice coach. Start speaking and I'll correct you instantly. Let's begin!"
             }
           };
 
           deepgramWs.send(JSON.stringify(config));
-          
-          // Configure endpointing for aggressive interruption (200ms)
-          const endpointingConfig = {
-            type: 'UpdateSpokenInput',
-            endpointing: 200
-          };
-          
-          deepgramWs.send(JSON.stringify(endpointingConfig));
+          console.log('Sent config to Deepgram:', JSON.stringify(config, null, 2));
           
           // Notify client that connection is ready
           clientWs.send(JSON.stringify({
             type: 'ready',
-            message: 'Connected to Deepgram'
+            message:  'Connected to Deepgram'
           }));
         });
 
         deepgramWs.on('message', (deepgramMessage) => {
-          // Forward Deepgram messages to client
-          clientWs.send(deepgramMessage);
+          // Check if it's binary audio data
+          if (Buffer.isBuffer(deepgramMessage)) {
+            // Forward binary audio directly to client
+            clientWs. send(deepgramMessage);
+          } else {
+            // Parse JSON messages
+            try {
+              const parsed = JSON.parse(deepgramMessage. toString());
+              console.log('Deepgram message:', parsed. type);
+              
+              // Forward all messages to client
+              clientWs.send(deepgramMessage);
+            } catch (e) {
+              // If not JSON, forward as-is
+              clientWs.send(deepgramMessage);
+            }
+          }
         });
 
         deepgramWs.on('error', (error) => {
-          console.error('Deepgram error:', error);
-          clientWs.send(JSON.stringify({
+          console.error('Deepgram error:', error. message);
+          clientWs. send(JSON.stringify({
             type: 'error',
-            message: 'Deepgram connection error'
+            message: `Deepgram connection error: ${error.message}`
           }));
         });
 
-        deepgramWs.on('close', () => {
-          console.log('Deepgram connection closed');
+        deepgramWs.on('close', (code, reason) => {
+          console.log(`Deepgram connection closed: ${code} - ${reason}`);
           clientWs.send(JSON.stringify({
             type: 'close',
             message: 'Deepgram connection closed'
@@ -336,13 +211,8 @@ wss.on('connection', (clientWs) => {
         return;
       }
 
-      // Forward audio data to Deepgram
-      if (data.type === 'audio' && deepgramWs && deepgramWs.readyState === WebSocket.OPEN) {
-        deepgramWs.send(message);
-      }
-
     } catch (error) {
-      // If not JSON, treat as binary audio data
+      // If not JSON, treat as binary audio data and forward to Deepgram
       if (deepgramWs && deepgramWs.readyState === WebSocket.OPEN) {
         deepgramWs.send(message);
       }
